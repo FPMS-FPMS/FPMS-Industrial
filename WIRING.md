@@ -1,109 +1,91 @@
-# FPMS-AS1 "Manta" — Wiring & Power Architecture
+# FPMS-AS1 "Manta" — Bill of Materials
 
-Every connection is plug-and-play. **No soldering is required anywhere in the power chain** —
-this was an explicit design constraint, not a happy accident.
+All prices in **USD** unless marked CAD. Prices are indicative and were current at time of
+specification; verify before ordering.
 
 ---
 
-## Power tree
+## Airframe
 
-```
-4S Li-ion battery (14.8 V nom / 16.8 V max)
-        │  XT60
-        ▼
-┌───────────────────────────────┐
-│   Holybro PM06 V2             │   power module + ESC distribution
-│   (analog PM — 6C compatible) │
-└───────────────────────────────┘
-   │          │            │              │
-   │14.8 V    │5.2 V       │5 V           │5 V
-   │unreg.    │analog      │peripheral    │companion
-   ▼          ▼            ▼              ▼
- JHEMCU    Pixhawk 6C    Water pump    Radxa Cubie A7S
- 4-in-1    POWER1                       (via JST-GH→USB-C)
-  ESC      (JST-GH 6-pin)
-   │
-   │ 3-phase, bullet connectors
-   ▼
- T1 · T2 · M3  (T-Motor F80 1900KV)
-```
-
-The **Pixhawk 6C** then redistributes regulated 5 V to its own peripherals:
-
-```
-Pixhawk 6C
-  ├── CAN1 ──────── Here3+ RTK GNSS        (JST-GH 4-pin, 5 V + DroneCAN)
-  ├── TELEM1 ────── SiK telemetry radio    (JST-GH 6-pin, 5 V + UART)
-  ├── TELEM2 ────── Radxa Cubie A7S        (JST-GH 6-pin → Dupont, MAVLink)
-  ├── FMU PWM ───── JHEMCU ESC             (DShot signal)
-  ├── AUX 1,2 ───── HEEWING T1 tilt servos (PWM signal + 5 V, 3-pin)
-  └── AUX (spare) ─ Water pump             (relay trigger)
-```
-
-And the **Cubie A7S** carries the sensing and uplink payload:
-
-```
-Radxa Cubie A7S
-  ├── MIPI-CSI ──── Radxa Camera 13M 214   (31-pin FPC ribbon)
-  ├── USB 3.0 ───── USB 5G module          (bus-powered)
-  └── WiFi 6 ────── ground station
-```
-
-## Connector reference
-
-| Link | Connector | Carries |
-|---|---|---|
-| Battery → PM06 V2 | XT60 | 14.8 V |
-| PM06 V2 → ESC | Pre-wired pads | 14.8 V unregulated |
-| PM06 V2 → Pixhawk POWER1 | JST-GH 6-pin | 5.2 V + analog voltage/current telemetry |
-| PM06 V2 → Cubie A7S | JST-GH → USB-C adapter | 5 V |
-| PM06 V2 → pump | 2-wire | 5 V |
-| ESC → each motor | 3.5 mm bullet ×3 | 3-phase AC |
-| Pixhawk FMU PWM → ESC | Signal wire | DShot |
-| Pixhawk AUX → tilt servos | 3-pin servo | PWM signal + 5 V |
-| Pixhawk CAN1 → Here3+ | JST-GH 4-pin | DroneCAN + 5 V |
-| Pixhawk TELEM1 → radio | JST-GH 6-pin | UART + 5 V |
-| Pixhawk TELEM2 → Cubie A7S | JST-GH → Dupont | MAVLink UART |
-| Cubie A7S → camera | MIPI-CSI 31-pin FPC | image data |
-
-## Current budget
-
-| Load | Draw |
-|---|---|
-| Motors (hover, 3 × ~7.8 A) | ~23.4 A |
-| Motors (peak) | ~30 A/motor |
-| Avionics (FC, GPS, telemetry) | ~0.5 A |
-| Companion computer + 5G | ~0.5–1 A |
-| Tilt servos (holding / sweeping) | ~0.2 A / ~2 A each |
-| Water pump (active) | ~0.13–0.22 A |
-| **System peak** | **~23 A** |
-
-XT60 and the 3.5 mm bullets are both rated comfortably above this. The 4-in-1 ESC is rated
-45 A per channel against a ~30 A per-motor peak.
-
-## Pack voltage under load
-
-The 4S pack is modelled with a real Li-ion discharge curve plus ~60 mΩ internal resistance:
-
-| State of charge | Open circuit | Under ~200 W load | Per cell |
+| Component | Qty | Price | Source |
 |---|---|---|---|
-| 100% | 16.80 V | 16.03 V | 4.01 V |
-| 60% | 15.06 V | 14.19 V | 3.55 V |
-| 20% | 13.61 V | 12.63 V | 3.16 V |
+| EPP foam hot-wire CNC cutting (from our DXF) | 1 | ~$50–150 CAD | [Malton Best, Mississauga](https://maltonbest.com/fabrication-services/cnc-foam-cutting/) |
+| EPP foam sheet stock | — | ~$15–25 CAD | local supplier |
+| Carbon rod spar + reinforcement tape | 1 set | ~$15 | local hobby supplier |
 
-## Three things that will silently break the build
+## Propulsion
 
-1. **PM03D will not work with Pixhawk 6C.** Digital I²C protocol vs the required analog. Use PM06 V2.
-2. **Here3+ must be on CAN1.** CAN2 is unsupported in current firmware and fails silently.
-3. **The FMU PWM rail needs external 5 V** from the PM06 V2 BEC, or the tilt servos never move.
+| Component | Qty | Price | Notes |
+|---|---|---|---|
+| T-Motor F80 1900KV | 3 | ~$84 | 1900KV is the long-range/efficiency variant, correct for 4S |
+| HQProp 7×4.5 propeller | 3 (+spares) | ~$8 | Ships with 5 mm bore; needs the included 4 mm reducer ring |
+| JHEMCU EM-45A 4-in-1 ESC | 1 | ~$52 | 45 A/ch, DShot, 3 of 4 channels used |
+| HEEWING T1 VTOL tilt servo | 2 | ~$36 | Metal gear; stock part on the reference aircraft |
 
-## Required ArduPilot parameters
+## Flight control & navigation
 
-| Parameter | Value | Purpose |
-|---|---|---|
-| `Q_FRAME_CLASS` | tiltrotor QuadPlane | Y3 tiltrotor airframe |
-| `CAN_D1_PROTOCOL` | 1 | DroneCAN for Here3+ |
-| `MOT_PWM_TYPE` | 6 | DShot600 to the ESC |
-| `SERVOn_FUNCTION` | tilt motor fn | Tilt servo mapping (AUX1/2) |
-| `SERVOn_FUNCTION` | 28 (RELAY) | Water pump on/off |
-| `SERIAL2_PROTOCOL` | 2 | MAVLink2 to the companion computer |
+| Component | Qty | Price | Notes |
+|---|---|---|---|
+| Pixhawk 6C | 1 | ~$166 | ArduPilot QuadPlane; JST-GH connector standard throughout |
+| Holybro PM06 V2 power module | 1 | ~$20 | ⚠️ See compatibility note below |
+| CubePilot Here3+ RTK GNSS | 1 | ~$180 | ⚠️ **Must connect to CAN1** — CAN2 unsupported in current firmware |
+| SiK-class telemetry radio (pair) | 1 | ~$40 | Powered from TELEM1 — single connector for power and data |
+
+## Companion computing & uplink
+
+| Component | Qty | Price | Notes |
+|---|---|---|---|
+| Radxa Cubie A7S (4 GB) | 1 | ~$25 | Octa-core, 3 TOPS NPU, 51 × 51 mm |
+| Radxa Camera 13M 214 | 1 | ~$20 | Official module for this board; MIPI-CSI 31-pin FPC |
+| USB 5G module | 1 | ~$35 | Bus-powered via USB 3.0 — no separate power rail |
+
+## Power
+
+| Component | Qty | Price | Notes |
+|---|---|---|---|
+| 4S Li-ion pack, ~5000 mAh (21700 cells) | 1 | ~$60 | **Pre-built** — avoids spot welding |
+
+## Payload
+
+| Component | Qty | Price | Notes |
+|---|---|---|---|
+| 3D-printed 120 mL tank + tapered outlet | 1 | ~$5 | Printed in-house; no off-the-shelf tank exists at this size |
+| 3–6 V micro submersible pump | 1 | ~$3 | 80–120 L/h; runs on the 5 V peripheral rail |
+
+## Connectors & cabling
+
+| Component | Qty | Price | Notes |
+|---|---|---|---|
+| XT60 connector pair | 1 | ~$1 | Battery → PM06 V2 |
+| 3.5 mm bullet connector set | 3 pair | ~$5 | ESC → motors; rated 40 A vs our 30 A peak |
+| JST-GH → USB-C adapter cable | 1 | ~$5 | PM06 V2 5 V output → Cubie A7S |
+| JST-GH → Dupont cable | 1 | ~$3 | Pixhawk TELEM2 → Cubie A7S MAVLink |
+
+---
+
+## Total
+
+| | |
+|---|---|
+| **Electronics and hardware** | **~$755 USD** |
+| **Airframe (CAD)** | **~$80–190 CAD** |
+| **Approximate total** | **~$1,150–1,250 CAD** |
+
+---
+
+## ⚠️ Compatibility notes — read before ordering
+
+**Holybro PM03D is NOT compatible with Pixhawk 6C.** The PM03D uses a digital I²C power
+protocol; the Pixhawk 6C requires an **analog** power module. Holybro's own compatibility
+documentation lists Pixhawk 6C as unsupported for PM03D. We specified PM03D at one stage and
+caught this during a wiring audit before ordering. **Use PM06 V2.**
+
+**Here3+ must be wired to CAN1.** CAN2 is not supported in current Here3+ firmware. Wiring to
+CAN2 produces a silent failure — the GPS simply never appears.
+
+**The FMU PWM rail needs external 5 V.** The Pixhawk 6C does not power the servo rail itself.
+The PM06 V2 5 V BEC output must be connected to the FMU PWM power pin, or the tilt servos will
+not move. This is easy to miss during assembly.
+
+A full 14-connection compatibility audit covering voltage, connector type, protocol and required
+ArduPilot parameters is maintained alongside this repository.

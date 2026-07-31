@@ -1,91 +1,116 @@
-# FPMS-AS1 "Manta" — Bill of Materials
+# FPMS — Fire Prevention & Management System
 
-All prices in **USD** unless marked CAD. Prices are indicative and were current at time of
-specification; verify before ordering.
+**Autonomous cultural-heritage protection through fire prevention.**
 
----
+> *"Protecting the past with the power of the present."*
+> **Think Globally · Act Locally · Save Culture**
 
-## Airframe
-
-| Component | Qty | Price | Source |
-|---|---|---|---|
-| EPP foam hot-wire CNC cutting (from our DXF) | 1 | ~$50–150 CAD | [Malton Best, Mississauga](https://maltonbest.com/fabrication-services/cnc-foam-cutting/) |
-| EPP foam sheet stock | — | ~$15–25 CAD | local supplier |
-| Carbon rod spar + reinforcement tape | 1 set | ~$15 | local hobby supplier |
-
-## Propulsion
-
-| Component | Qty | Price | Notes |
-|---|---|---|---|
-| T-Motor F80 1900KV | 3 | ~$84 | 1900KV is the long-range/efficiency variant, correct for 4S |
-| HQProp 7×4.5 propeller | 3 (+spares) | ~$8 | Ships with 5 mm bore; needs the included 4 mm reducer ring |
-| JHEMCU EM-45A 4-in-1 ESC | 1 | ~$52 | 45 A/ch, DShot, 3 of 4 channels used |
-| HEEWING T1 VTOL tilt servo | 2 | ~$36 | Metal gear; stock part on the reference aircraft |
-
-## Flight control & navigation
-
-| Component | Qty | Price | Notes |
-|---|---|---|---|
-| Pixhawk 6C | 1 | ~$166 | ArduPilot QuadPlane; JST-GH connector standard throughout |
-| Holybro PM06 V2 power module | 1 | ~$20 | ⚠️ See compatibility note below |
-| CubePilot Here3+ RTK GNSS | 1 | ~$180 | ⚠️ **Must connect to CAN1** — CAN2 unsupported in current firmware |
-| SiK-class telemetry radio (pair) | 1 | ~$40 | Powered from TELEM1 — single connector for power and data |
-
-## Companion computing & uplink
-
-| Component | Qty | Price | Notes |
-|---|---|---|---|
-| Radxa Cubie A7S (4 GB) | 1 | ~$25 | Octa-core, 3 TOPS NPU, 51 × 51 mm |
-| Radxa Camera 13M 214 | 1 | ~$20 | Official module for this board; MIPI-CSI 31-pin FPC |
-| USB 5G module | 1 | ~$35 | Bus-powered via USB 3.0 — no separate power rail |
-
-## Power
-
-| Component | Qty | Price | Notes |
-|---|---|---|---|
-| 4S Li-ion pack, ~5000 mAh (21700 cells) | 1 | ~$60 | **Pre-built** — avoids spot welding |
-
-## Payload
-
-| Component | Qty | Price | Notes |
-|---|---|---|---|
-| 3D-printed 120 mL tank + tapered outlet | 1 | ~$5 | Printed in-house; no off-the-shelf tank exists at this size |
-| 3–6 V micro submersible pump | 1 | ~$3 | 80–120 L/h; runs on the 5 V peripheral rail |
-
-## Connectors & cabling
-
-| Component | Qty | Price | Notes |
-|---|---|---|---|
-| XT60 connector pair | 1 | ~$1 | Battery → PM06 V2 |
-| 3.5 mm bullet connector set | 3 pair | ~$5 | ESC → motors; rated 40 A vs our 30 A peak |
-| JST-GH → USB-C adapter cable | 1 | ~$5 | PM06 V2 5 V output → Cubie A7S |
-| JST-GH → Dupont cable | 1 | ~$3 | Pixhawk TELEM2 → Cubie A7S MAVLink |
+[![WRO 2026](https://img.shields.io/badge/WRO%202026-Future%20Innovators-c8102e)](https://wro-association.org/)
+[![Gold — Canada Nationals](https://img.shields.io/badge/Gold-WRO%20Canada%20Nationals%202026-d4af37)]()
+[![World Final](https://img.shields.io/badge/World%20Final-San%20Juan%2C%20Puerto%20Rico-0057b7)]()
 
 ---
 
-## Total
+## The problem
 
-| | |
-|---|---|
-| **Electronics and hardware** | **~$755 USD** |
-| **Airframe (CAD)** | **~$80–190 CAD** |
-| **Approximate total** | **~$1,150–1,250 CAD** |
+Every mainstream wildfire tool — satellites, smoke cameras, 911 calls, air tankers —
+watches for **smoke**. By the time smoke appears, the site is already burning.
 
----
+For Indigenous cultural heritage, that gap is fatal. A petroglyph, a ceremonial site, or a
+culturally modified tree lost to wildfire is not *damaged* — it is **erased**. It cannot be
+rebuilt, reprinted, or restored.
 
-## ⚠️ Compatibility notes — read before ordering
+FPMS operates in the empty window *before* ignition: it finds dangerously dry ground near
+heritage sites and treats it before there is anything to report.
 
-**Holybro PM03D is NOT compatible with Pixhawk 6C.** The PM03D uses a digital I²C power
-protocol; the Pixhawk 6C requires an **analog** power module. Holybro's own compatibility
-documentation lists Pixhawk 6C as unsupported for PM03D. We specified PM03D at one stage and
-caught this during a wiring audit before ordering. **Use PM06 V2.**
+## What it does
 
-**Here3+ must be wired to CAN1.** CAN2 is not supported in current Here3+ firmware. Wiring to
-CAN2 produces a silent failure — the GPS simply never appears.
+FPMS is an autonomous multi-device fleet that senses pre-ignition fire risk, decides on its
+own which zone to serve, navigates there, applies targeted water, documents the heritage site
+it just protected, and reports — with no human in the loop.
 
-**The FMU PWM rail needs external 5 V.** The Pixhawk 6C does not power the servo rail itself.
-The PM06 V2 5 V BEC output must be connected to the FMU PWM power pin, or the tilt servos will
-not move. This is easy to miss during assembly.
+```
+SENSE  ──▶  DECIDE  ──▶  NAVIGATE  ──▶  SUPPRESS  ──▶  REPORT
+ zone       closest-      LiDAR +        targeted      log, geotag,
+ nodes      first,        Nav2, obstacle  water         alert, return
+ (ESP-NOW   severity      avoidance                     & refill
+  < 2 s)    rank
+```
 
-A full 14-connection compatibility audit covering voltage, connector type, protocol and required
-ArduPilot parameters is maintained alongside this repository.
+## System architecture
+
+| Subsystem | Count | Role |
+|---|---|---|
+| Zone sensor nodes | 3 | Solar ESP32-C3; soil moisture, leaf wetness, thermal. ESP-NOW alert in under 2 s |
+| Ground rovers | 2 | ROS 2 / Nav2 autonomous navigation, YOLO perception, water application, heritage documentation |
+| Water stations | 2 | Autonomous refill, ArUco docking |
+| Aerial scout — FPMS-AS1 "Manta" | 1 | VTOL tiltrotor; aerial survey, RTK heritage waypoint logging, precision water delivery |
+| Ground HQ | 1 | ROS 2 bridge, live dashboard, SQLite mission log, TTS, alerting |
+
+## Subsystem documentation
+
+- **[FPMS-AS1 "Manta" — aerial platform](docs/drone/README.md)** — Y3 tiltrotor VTOL flying wing
+  - [Bill of materials](docs/drone/BOM.md)
+  - [Wiring and power architecture](docs/drone/WIRING.md)
+  - [Flight simulator](docs/drone/SIMULATOR.md)
+
+## Technology
+
+**Edge (on-vehicle)** — ROS 2 Humble · Nav2 · SLAM Toolbox · YOLO on RKNN NPU ·
+ArduPilot QuadPlane · EKF sensor fusion
+**Cloud** — AWS IoT Core · multimodal reporting agent · SQLite mission log · FastAPI
+**Comms** — ESP-NOW (zone alerts) · WiFi 6 (telemetry) · DDS peer swarm · 5G uplink (aerial)
+**Sensing** — LiDAR · AI vision · thermal · inertial · environmental
+
+### Edge vs cloud — a deliberate split
+
+All **real-time perception and control runs locally** on the vehicles: navigation, obstacle
+avoidance, object detection, sensor fusion, and the spray decision. The rovers and the aircraft
+keep operating with zero connectivity.
+
+**Non-time-critical reasoning runs in the cloud** — mission report generation and natural-language
+summarisation. This is not a limitation we worked around; it is the correct architecture.
+A 6 TOPS edge NPU cannot run a vision-language model at usable speed, and pretending otherwise
+would mean a robot that stalls waiting for a sentence. It is the same pattern commercial fleet
+robotics uses, and it degrades gracefully: if the link drops, the vehicle carries on and reports later.
+
+## Repository layout
+
+```
+.
+├── docs/
+│   └── drone/            FPMS-AS1 "Manta" design documentation
+├── simulator/            Physics-based flight simulator (open in any browser)
+├── AI_USE.md             Disclosure of AI assistance, per WRO rules
+└── LICENSE
+```
+
+## The team
+
+**Aryan Wadhawan** and **Alex Tang** — David Leeder Middle School, Ontario, Canada.
+
+Two students who designed, built, coded and present the entire system themselves.
+
+- 🥇 **Gold** — WRO Canada National Final 2026, Montréal
+- 🌎 **Qualified** — WRO International Final, San Juan, Puerto Rico, December 2026
+- Category: Future Innovators — Junior · Season theme: *Robots Meet Culture*
+
+## Supporting the project
+
+FPMS is built and funded by two students and their families. Component support, technical
+mentorship, and partnership enquiries are all welcome.
+
+📧 **scorch.sentinel.fpms@gmail.com**
+
+## Licence
+
+FPMS mission code is released under the [MIT Licence](LICENSE).
+
+Third-party dependencies retain their own licences. Where GPL-licensed components are used,
+they are kept in separate modules with clearly documented boundaries, and are **not** linked
+into MIT-licensed FPMS mission code.
+
+## AI use disclosure
+
+This project used AI assistance during design and development. See **[AI_USE.md](AI_USE.md)**
+for a full and honest account, as required by WRO competition rules.
