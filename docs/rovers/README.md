@@ -50,10 +50,10 @@ are fused so no single sensor has to be right on its own.
 
 ## How the rovers relate to the rest of the system
 
-The rovers are the **decide-and-act** tier. Upstream, the [zone nodes](../system/ARCHITECTURE.md)
-sense risk and alert them; downstream, they report to the [cloud](../system/INTELLIGENCE.md) for
+The rovers are the **decide-and-act** tier. Upstream, the zone nodes
+sense risk and alert them; downstream, they report to the cloud for
 mission logging and natural-language reporting. The full sequence is in the
-[mission workflow](../system/MISSION.md).
+mission workflow.
 
 ---
 
