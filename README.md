@@ -76,13 +76,12 @@ numerical stability across frame rates. Full method: [flight simulator](docs/dro
 
 ## Documentation
 
-**System**
-- [Architecture overview](docs/system/ARCHITECTURE.md) — how the whole fleet fits together
-- [Mission workflow](docs/system/MISSION.md) — one alert to prevention, in five autonomous steps
-- [Intelligence: edge vs cloud](docs/system/INTELLIGENCE.md) — what runs on-vehicle and what runs in the cloud
-
 **Ground rovers**
 - [Rover overview](docs/rovers/README.md) — two rovers, one rebuilt from the national champion
+- [Navigation](docs/rovers/NAVIGATION.md) — route planning, obstacle avoidance, and why the IMU is not trusted
+- [Calibration](docs/rovers/CALIBRATION.md) — every measured constant, and the method behind it
+- [Operator dashboard](docs/rovers/DASHBOARD.md) — the on-vehicle interface, with live screenshots
+- [Rover 2 source](software/rover2/fpms_phase6.py) — the complete navigation program
 
 **Aerial platform — FPMS-AS1 "Manta"**
 - [Aircraft overview](docs/drone/README.md) — Y3 tiltrotor VTOL flying wing

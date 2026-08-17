@@ -54,3 +54,53 @@ The rovers are the **decide-and-act** tier. Upstream, the [zone nodes](../system
 sense risk and alert them; downstream, they report to the [cloud](../system/INTELLIGENCE.md) for
 mission logging and natural-language reporting. The full sequence is in the
 [mission workflow](../system/MISSION.md).
+
+---
+
+## Documentation
+
+
+- **[Navigation](NAVIGATION.md)** — how the rover plans a route, avoids an obstacle,
+  and measures its own turns. Includes the findings that changed the design.
+- **[Calibration](CALIBRATION.md)** — every measured constant, with the method used
+  to obtain it and the earlier value it replaced.
+- **[Dashboard](DASHBOARD.md)** — the on-vehicle operator interface, with live
+  screenshots.
+
+Source: [`software/rover2/fpms_phase6.py`](../../software/rover2/fpms_phase6.py)
+
+## Rover 2 at a glance
+
+| | |
+|---|---|
+| Compute | Single-board computer, Ubuntu 22.04, Python 3.10 |
+| Motor controller | Yahboom STM32 over CH340 USB serial, Rosmaster protocol |
+| Drive | Four-wheel differential, 230 mm wide, 170 mm track |
+| LiDAR | LD D500, 360 one-degree bins at 10 Hz |
+| Odometry | Wheel encoders at 6.00 counts/mm |
+| Heading | **LiDAR scan-matching** — the IMU is logged but not trusted |
+| Interface | Self-hosted dashboard on port 8085 |
+
+## The mission it performs
+
+Drive from a start box to a target zone in a 1000 × 1200 mm arena, avoiding an
+obstacle placed between the two, hold position for two seconds, and return home.
+Turns land within 1–3°. A full round trip takes 25–35 seconds.
+
+## Three decisions that shaped this stack
+
+**The IMU is not trusted.** The gyro on the motor board under-reads physical
+rotation by 4–5×. Every turn is measured by matching the live LiDAR scan against a
+snapshot taken before the turn — a measurement that shares no hardware with the
+IMU. The IMU is still printed beside every turn so the discrepancy stays visible.
+
+**Safety outranks shape.** The competition route should be a clean two-joint
+diamond. The planner tries hard to produce one, but if no two-joint route clears
+the obstacle by 196 mm it keeps the longer A* path instead. An ugly safe route beats
+a pretty one that clips.
+
+**Everything is measured, not assumed.** Turn rate against motor duty is 6.3×
+non-linear; on-ground rotation is 16× slower than the same duty with the wheels
+raised. Several confident hypotheses — a command watchdog, a weak motor, a missing
+driver — were each disproved by measurement. [Calibration](CALIBRATION.md) records
+the false ones alongside the true, because the false ones were plausible.
