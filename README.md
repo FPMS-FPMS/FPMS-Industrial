@@ -5,9 +5,9 @@
 > *"Protecting the past with the power of the present."*
 > **Think Globally · Act Locally · Save Culture**
 
-`WRO 2026 · Future Innovators`&nbsp;&nbsp;`🥇 Gold · WRO Canada Nationals 2026`&nbsp;&nbsp;`🌎 World Final · San Juan, Puerto Rico`&nbsp;&nbsp;`License: MIT`
+`WRO 2026 · Future Innovators`&nbsp;&nbsp;`🥇 1st place · WRO Canada National Final 2026 (FI Junior)`&nbsp;&nbsp;`🌎 World Final · San Juan, Puerto Rico`&nbsp;&nbsp;`License: MIT`
 
-Gold medallists at the World Robot Olympiad Canada National Final 2026, representing Canada
+1st place, Future Innovators Junior, at the World Robot Olympiad Canada National Final (May 31, 2026), representing Canada
 at the WRO International Final in San Juan, Puerto Rico.
 
 ---
@@ -26,14 +26,14 @@ heritage sites and treats it before there is anything to report.
 
 ## What it does
 
-FPMS is an autonomous multi-device fleet that senses pre-ignition fire risk, decides on its own
+FPMS is designed as an autonomous multi-device fleet that senses pre-ignition fire risk, decides on its own
 which zone to serve, navigates there, applies targeted water, documents the heritage site it
 just protected, and reports — with no human in the loop.
 
 ```mermaid
 flowchart LR
     A[SENSE<br/>zone nodes<br/>ESP-NOW &lt; 2s] --> B[DECIDE<br/>closest-first<br/>severity rank]
-    B --> C[NAVIGATE<br/>LiDAR + Nav2<br/>obstacle avoidance]
+    B --> C[NAVIGATE<br/>LiDAR + our own<br/>route planner]
     C --> D[SUPPRESS<br/>targeted water<br/>geotag site]
     D --> E[REPORT<br/>log · alert<br/>return &amp; refill]
     E -.loop.-> A
@@ -49,8 +49,8 @@ flowchart LR
 | Subsystem | Count | Role |
 |---|---|---|
 | Zone sensor nodes | 3 | Solar ESP32; soil moisture, leaf wetness, thermal. ESP-NOW alert in under 2 s |
-| Ground rovers | 2 | ROS 2 / Nav2 navigation, YOLO perception, water application, heritage documentation |
-| Water stations | 2 | Autonomous refill, ArUco docking |
+| Ground rovers | 2 | ROS 2 Humble. Rover 1 (main, being built): thermal + stereo cameras. Rover 2 (backup, proven): our own LiDAR route planner, targeted water, self-refill; YOLO checks and logs the target |
+| Water stations | 2 | Designed, not yet built (today the rover refills itself from a water source) |
 | Aerial scout — FPMS-AS1 "Manta" | 1 | VTOL tiltrotor; aerial survey, RTK heritage waypoint logging, precision water delivery |
 | Ground HQ | 1 | ROS 2 bridge, live dashboard, SQLite mission log, TTS, alerting |
 
@@ -101,8 +101,8 @@ on-vehicle while heavier reasoning runs in the cloud. The [aircraft design histo
 documents every configuration we evaluated and rejected, with reasons — including one that was
 geometrically impossible.
 
-**Edge (on-vehicle)** — ROS 2 Humble · Nav2 · SLAM Toolbox · YOLO on RKNN NPU ·
-ArduPilot QuadPlane · EKF sensor fusion
+**Edge (on-vehicle)** — ROS 2 Humble · our own planner (8 modules, 125 offline checks) · YOLO ·
+ArduPilot QuadPlane (drone)
 **Cloud** — AWS IoT Core · multimodal reporting agent · SQLite mission log · FastAPI
 **Comms** — ESP-NOW (zone alerts) · WiFi 6 (telemetry) · DDS peer swarm · 5G uplink (aerial)
 **Sensing** — LiDAR · AI vision · thermal · inertial · environmental
@@ -113,7 +113,7 @@ ArduPilot QuadPlane · EKF sensor fusion
 
 Two students who designed, built, coded and present the entire system themselves.
 
-- 🥇 **Gold** — WRO Canada National Final 2026, Montréal
+- 🥇 **1st place**, Future Innovators Junior — WRO Canada National Final, Montréal, May 31, 2026
 - 🌎 **Qualified** — WRO International Final, San Juan, Puerto Rico, December 2026
 - Category: Future Innovators · Season theme: *Robots Meet Culture*
 

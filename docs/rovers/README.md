@@ -3,22 +3,22 @@
 Two autonomous ground rovers do the physical work: navigate to a dry zone, avoid obstacles and
 each other, apply targeted water, and document the heritage site with geotagged imagery.
 
-One is a new build. The other is the robot that won Gold at Nationals, rebuilt.
+Rover 1 is a new build and our main rover for the Final; it is being built now. Rover 2 is the robot that won 1st place at Nationals, rebuilt: our backup and test bed, and the rover behind every result proven so far.
 
 ---
 
 ## Two rovers, one reborn champion
 
-| | Rover 1 — new build | Rover 2 — champion rebuild |
+| | Rover 1 — main rover (being built) | Rover 2 — champion rebuild (backup, proven) |
 |---|---|---|
-| Role | Patrols zones 1–2, water refill | Patrols zone 3 |
-| Compute | Orange Pi 5B 16 GB (RK3588S, 6 TOPS NPU) | Identical stack |
-| Motion | Yahboom V3.0 + STM32F103 | Identical |
-| Vision | AI camera 30 fps (YOLO) | Identical |
-| LiDAR | D500, 360° / 12 m | Identical |
-| Thermal | Yes | Yes |
-| Inertial | 9-axis IMU + wheel odometry | Identical |
-| Origin | Built new in 2026 | Rebuilt from the Gold-at-Nationals robot |
+| Today | All sensors streaming on ROS 2 Humble; driving and spraying being built | Plans, drives, sprays and refills by itself |
+| Compute | Orange Pi 5 Max 8 GB | Orange Pi 5B |
+| Motion | Yahboom STM32 ROS board V3.0 | Yahboom STM32 board, behind our own ROS 2 bridge |
+| Vision | Thermal Master P1 thermal camera (160×120) + stereo camera | HBV USB colour camera; YOLO checks and logs the target |
+| LiDAR | LDROBOT D500 | LDROBOT D500, 360°, 10 scans/s |
+| Inertial | IMU (ICM-20948) + wheel odometry | IMU + wheel encoders |
+| Water | Same as Rover 2 (being built) | ESP32-S3 water board: spray pump, refill pump, level probe, servo-lowered refill tube |
+| Origin | Built new in 2026 | Rebuilt from the 1st-place-at-Nationals robot |
 | New core-part cost | — | **$0** — computer, motors, wheels, camera all carried over |
 
 Rebuilding the champion instead of buying a second robot means a sponsor's dollar goes twice as
@@ -27,26 +27,26 @@ far, and it gives us a true field twin for testing the peer-swarm hand-off.
 ## The stack
 
 - **OS / middleware** — Ubuntu · ROS 2 Humble
-- **Navigation** — Nav2 · SLAM Toolbox · EKF sensor fusion (LiDAR + IMU + odometry)
-- **Perception** — YOLO running on the RK3588 RKNN NPU (on-device, no laptop)
+- **Navigation** — our own planner (`fpms_rover2`): the shortest route with at most two turns and two straight moves; every turn measured by LiDAR scan matching (to 0.09°); position corrected against fixed landmarks
+- **Perception** — YOLO on the rover; it checks and logs the target, and never decides when to spray
 - **Suppression** — pump + nozzle, short targeted spray
 - **Dashboard** — FastAPI · WebSocket live telemetry
-- **Swarm** — the two rovers see each other over DDS as moving obstacles, so one covers a zone
+- **Swarm (planned)** — the two rovers see each other over DDS as moving obstacles, so one covers a zone
   while the other refills — no gap in patrol
 
-## The five decisions each rover makes on its own
+## The five decisions Rover 2 makes on its own (Rover 1 is being built to make them too)
 
-1. **Closest first** — which zone to serve next
-2. **Gap-finding** — how to steer around obstacles (LiDAR)
-3. **Spray or not** — a YOLO confidence gate
-4. **Severity rank** — how urgent a zone is, from sensor magnitude
-5. **Return home** — when all zones are clear, go back and refill
+1. **Is it safe to start?** — stop signal clear, LiDAR working (median of 5 scans), IMU live and still, wheels reporting
+2. **Which route?** — the shortest route that keeps the whole body at least 120 mm from the obstacle (never below 85 mm), including room to turn
+3. **When is a turn finished?** — LiDAR scans before and after, to 0.09°; one strong turn that cannot overshoot
+4. **When to spray and refill?** — only after a full stop (1 s, moved less than 3 mm), then a 2 s stream; a refill is judged by how fast the level rises
+5. **Where am I?** — wheel odometry corrected against at least 3 agreeing landmarks, shown live on the dashboard map
 
-## Sensor fusion — five modalities
+## Sensors — each used only for what it is good at
 
-Spatial awareness (LiDAR), AI vision (camera + YOLO), thermal (hotspot confirmation),
-inertial (IMU + encoders), and environmental (the zone nodes' soil / leaf / air readings)
-are fused so no single sensor has to be right on its own.
+LiDAR (obstacles, route, turns, position), camera + YOLO (checks and logs the target), wheel
+encoders and IMU (distance and motion), and the water-level probe (spray and refill). On Rover 1, a
+thermal camera.
 
 ## How the rovers relate to the rest of the system
 
