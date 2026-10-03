@@ -9,10 +9,15 @@ honest account. We would rather over-disclose than have a judge discover somethi
 
 ## Tools used
 
-| Tool | Used for |
-|---|---|
-| Anthropic Claude | Design research, engineering calculations, code review, documentation drafting, debugging |
-| OpenAI ChatGPT | Diagram and infographic image generation from our written specifications |
+| AI system | Used for | How much |
+|---|---|---|
+| Anthropic Claude (incl. Claude Code) | Design research, engineering calculations, code review, debugging, and help drafting and structuring our WRO report from our own answers, research and test data | Rover code: a little. Report: AI helped draft it; we rewrite every section in our own words and check every fact against its source |
+| OpenAI ChatGPT | Diagram and infographic images, made from our written descriptions | Booth graphics only |
+| Base44 | An AI app builder we used to make our website (fpms.base44.app) | Website only |
+| AI agents in our cloud (AWS) | Writing reports from the robot's data and sending email alerts | Reports and alerts only; the robot drives and sprays without them |
+| YOLO (open source) | Recognising objects in the robot's camera image | Runs on the robot; it only checks and logs, it never decides when to spray |
+
+The same table is in section 3.8 of our WRO 2026 project report.
 
 ## Where AI genuinely helped
 
