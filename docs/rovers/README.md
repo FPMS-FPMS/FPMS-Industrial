@@ -3,21 +3,21 @@
 Two autonomous ground rovers do the physical work: navigate to a dry zone, avoid obstacles and
 each other, apply targeted water, and document the heritage site with geotagged imagery.
 
-One is a new build. The other is the robot that won 1st place at Nationals, rebuilt — it is our competition robot for the Final.
+Rover 1 is a new build and our main rover for the Final; it is being built now. Rover 2 is the robot that won 1st place at Nationals, rebuilt: our backup and test bed, and the rover behind every result proven so far.
 
 ---
 
 ## Two rovers, one reborn champion
 
-| | Rover 1 — new build | Rover 2 — champion rebuild (competition robot) |
+| | Rover 1 — main rover (being built) | Rover 2 — champion rebuild (backup, proven) |
 |---|---|---|
-| Role | Senses only today; joins the Final demo later | The SCORCH rover at the Final: plans, drives, sprays, refills |
+| Today | All sensors streaming on ROS 2 Humble; driving and spraying being built | Plans, drives, sprays and refills by itself |
 | Compute | Orange Pi 5 Max 8 GB | Orange Pi 5B |
 | Motion | Yahboom STM32 ROS board V3.0 | Yahboom STM32 board, behind our own ROS 2 bridge |
-| Vision | Thermal Master P1 thermal camera | USB colour camera; YOLO checks and logs the target |
-| LiDAR | LDROBOT LD19 | LDROBOT D500, 360°, 10 scans/s |
+| Vision | Thermal Master P1 thermal camera (160×120) + stereo camera | HBV USB colour camera; YOLO checks and logs the target |
+| LiDAR | LDROBOT D500 | LDROBOT D500, 360°, 10 scans/s |
 | Inertial | IMU (ICM-20948) + wheel odometry | IMU + wheel encoders |
-| Water | — | ESP32-S3 water board: spray pump, refill pump, level probe, servo-lowered refill tube |
+| Water | Same as Rover 2 (being built) | ESP32-S3 water board: spray pump, refill pump, level probe, servo-lowered refill tube |
 | Origin | Built new in 2026 | Rebuilt from the 1st-place-at-Nationals robot |
 | New core-part cost | — | **$0** — computer, motors, wheels, camera all carried over |
 
@@ -34,7 +34,7 @@ far, and it gives us a true field twin for testing the peer-swarm hand-off.
 - **Swarm (planned)** — the two rovers see each other over DDS as moving obstacles, so one covers a zone
   while the other refills — no gap in patrol
 
-## The five decisions Rover 2 makes on its own
+## The five decisions Rover 2 makes on its own (Rover 1 is being built to make them too)
 
 1. **Is it safe to start?** — stop signal clear, LiDAR working (median of 5 scans), IMU live and still, wheels reporting
 2. **Which route?** — the shortest route that keeps the whole body at least 120 mm from the obstacle (never below 85 mm), including room to turn

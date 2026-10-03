@@ -49,7 +49,7 @@ flowchart LR
 | Subsystem | Count | Role |
 |---|---|---|
 | Zone sensor nodes | 3 | Solar ESP32; soil moisture, leaf wetness, thermal. ESP-NOW alert in under 2 s |
-| Ground rovers | 2 | ROS 2 Humble. Rover 2 (competition robot): our own LiDAR route planner, targeted water, self-refill; YOLO checks and logs the target. Rover 1: sensing |
+| Ground rovers | 2 | ROS 2 Humble. Rover 1 (main, being built): thermal + stereo cameras. Rover 2 (backup, proven): our own LiDAR route planner, targeted water, self-refill; YOLO checks and logs the target |
 | Water stations | 2 | Designed, not yet built (today the rover refills itself from a water source) |
 | Aerial scout — FPMS-AS1 "Manta" | 1 | VTOL tiltrotor; aerial survey, RTK heritage waypoint logging, precision water delivery |
 | Ground HQ | 1 | ROS 2 bridge, live dashboard, SQLite mission log, TTS, alerting |
